@@ -13,6 +13,7 @@
     themeColor1BG: "#FF9900",
     themeColor2BG: "#FF00DC",
     themeColor3BG: "#0094FF",
+    swipe: false,
   };
   let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
   for (const key in saved_settings) {
