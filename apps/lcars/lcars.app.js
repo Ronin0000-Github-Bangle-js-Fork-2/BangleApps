@@ -12,6 +12,7 @@ let settings = {
   themeColor1BG: "#FF9900",
   themeColor2BG: "#FF00DC",
   themeColor3BG: "#0094FF",
+  control: "tap",
 };
 let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
 for (const key in saved_settings) {
@@ -697,46 +698,48 @@ function feedback(){
 
 // Touch gestures to control clock. We don't use swipe to be compatible with the bangle ecosystem
 Bangle.on('touch', function(btn, e){
-  var left = parseInt(g.getWidth() * 0.2);
-  var right = g.getWidth() - left;
-  var upper = parseInt(g.getHeight() * 0.2);
-  var lower = g.getHeight() - upper;
+  if(settings.control == "tap"){
+    var left = parseInt(g.getWidth() * 0.2);
+    var right = g.getWidth() - left;
+    var upper = parseInt(g.getHeight() * 0.2);
+    var lower = g.getHeight() - upper;
 
-  var is_left = e.x < left;
-  var is_right = e.x > right;
-  var is_upper = e.y < upper;
-  var is_lower = e.y > lower;
+    var is_left = e.x < left;
+    var is_right = e.x > right;
+    var is_upper = e.y < upper;
+    var is_lower = e.y > lower;
 
-  if(is_left && lcarsViewPos == 1){
-    feedback();
-    lcarsViewPos = 0;
-    draw();
-    return;
-
-  } else if(is_right  && lcarsViewPos == 0){
-    feedback();
-    lcarsViewPos = 1;
-    draw();
-    return;
-  }
-
-  if(lcarsViewPos == 0){
-    if(is_upper){
+    if(is_left && lcarsViewPos == 1){
       feedback();
-      increaseAlarm();
-      drawState();
+      lcarsViewPos = 0;
+      draw();
       return;
-    } if(is_lower){
+
+    } else if(is_right  && lcarsViewPos == 0){
       feedback();
-      decreaseAlarm();
-      drawState();
+      lcarsViewPos = 1;
+      draw();
       return;
     }
-  } else if (lcarsViewPos == 1 && (is_upper || is_lower) && plotMonth != is_lower){
-    feedback();
-    plotMonth = is_lower;
-    draw();
-    return;
+
+    if(lcarsViewPos == 0){
+      if(is_upper){
+        feedback();
+        increaseAlarm();
+        drawState();
+        return;
+      } if(is_lower){
+        feedback();
+        decreaseAlarm();
+        drawState();
+        return;
+      }
+    } else if (lcarsViewPos == 1 && (is_upper || is_lower) && plotMonth != is_lower){
+      feedback();
+      plotMonth = is_lower;
+      draw();
+      return;
+    }
   }
 });
 
