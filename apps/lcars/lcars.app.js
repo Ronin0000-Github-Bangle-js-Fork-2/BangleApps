@@ -696,6 +696,52 @@ function feedback(){
   Bangle.buzz(40, 0.3);
 }
 
+Bangle.on("drag", e => {
+  if (!drag && settings.control == "swipe") { // start dragging
+    drag = {x: e.x, y: e.y};
+  } else if (!e.b) { // released
+    const dx = e.x-drag.x, dy = e.y-drag.y;
+    drag = null;
+    // Horizontal swipe
+    if (Math.abs(dx)>Math.abs(dy)+10) {
+      if(dx > 0){
+        feedback();
+        lcarsViewPos = 0;
+        draw();
+      } else {
+        feedback();
+        lcarsViewPos = 1;
+        draw();
+      }
+    // Vertical swipe
+    } else if (Math.abs(dy)>Math.abs(dx)+10) {
+      if(lcarsViewPos == 0){
+        if(dy > 0){
+          feedback();
+          increaseAlarm();
+          drawState();
+        } else {
+          feedback();
+          decreaseAlarm();
+          drawState();
+        }
+        // Only update the state and return to
+        // avoid a full draw as this is much faster.
+        drawState();
+        return;
+      }
+      if (lcarsViewPos == 1 && (is_upper || is_lower) && plotMonth != is_lower){
+        feedback();
+        plotMonth = is_lower;
+        draw();
+        return;
+      }
+    }
+    draw();
+  }
+});
+
+
 // Touch gestures to control clock. We don't use swipe to be compatible with the bangle ecosystem
 Bangle.on('touch', function(btn, e){
   if(settings.control == "tap"){
