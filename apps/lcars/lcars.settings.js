@@ -13,7 +13,7 @@
     themeColor1BG: "#FF9900",
     themeColor2BG: "#FF00DC",
     themeColor3BG: "#0094FF",
-    swipe: false,
+    control: "tap",
   };
   let saved_settings = storage.readJSON(SETTINGS_FILE, 1) || settings;
   for (const key in saved_settings) {
@@ -27,6 +27,7 @@
 
   var dataOptions = ["Steps", "Battery", "VREF", "HRM", "Temp", "Humidity", "Wind", "Altitude", "CoreT"];
   var speedOptions = ["kph", "mph"];
+  var controlOptions = ["tap", "swipe"];
   var color_options = ['Green','Orange','Cyan','Purple','Red','Blue','Yellow','White'];
   var bg_code = ['#00ff00','#FF9900','#0094FF','#FF00DC','#ff0000','#0000ff','#ffef00','#FFFFFF'];
 
@@ -101,6 +102,15 @@
       format: v => color_options[v],
       onchange: v => {
         settings.themeColor3BG = bg_code[v];
+        save();
+      },
+    },
+    'Contol': {
+      value: 0 | controlOptions.indexOf(settings.control),
+      min: 0, max: 1,
+      format: v => controlOptions[v],
+      onchange: v => {
+        settings.control = controlOptions[v];
         save();
       },
     }
